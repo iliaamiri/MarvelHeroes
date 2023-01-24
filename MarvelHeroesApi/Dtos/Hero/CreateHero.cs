@@ -1,6 +1,6 @@
 ﻿namespace MarvelHeroesApi.Dtos.Hero;
 
-public class CreatePayload
+public class CreateHero
 {
     public string HeroName { get; set; } = null!;
     public string? SecretIdentity { get; set; }

@@ -2,7 +2,7 @@
 
 namespace MarvelHeroesApi.Dtos.Hero;
 
-public class UpdatePayload
+public class UpdateHero
 {
     public int Id { get; set; }
     public string HeroName { get; set; } = null!;
