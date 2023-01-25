@@ -19,7 +19,7 @@ function CreateHero() {
     }, [])
 
     return (
-        <Layout>
+        <Layout className={"flex-col items-center"}>
             <h1>New Hero 🦸</h1>
             {(allPowers === null) ? "Loading Powers..." : (
                 <div className="flex flex-col">

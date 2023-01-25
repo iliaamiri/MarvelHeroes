@@ -8,6 +8,7 @@ import {
   RouterProvider,
 } from "react-router-dom"
 import CreateHero from './pages/createHero'
+import {PowersHomePage} from "./pages/powersHomePage";
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,23 @@ const router = createBrowserRouter([
   {
     path: "/heroes/:id/edit",
     element: <CreateHero />,
-  }
+  },
+  {
+    path: "/heroes/:id/delete",
+    element: <CreateHero />,
+  },
+  {
+    path: "/powers",
+    element: <PowersHomePage />,
+  },
+  {
+    path: "/powers/:id/edit",
+    element: <PowersHomePage />,
+  },
+  {
+    path: "/powers/:id/delete",
+    element: <PowersHomePage />,
+  },
 ]);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
