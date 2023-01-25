@@ -1,0 +1,7 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "./MarvelHeroesApi/Dockerfile"
+
+[deploy]
+startCommand = "dotnet MarvelHeroesApi.dll"
+restartPolicyType = "never"

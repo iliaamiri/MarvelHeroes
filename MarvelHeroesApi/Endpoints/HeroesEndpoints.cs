@@ -17,14 +17,12 @@ public class HeroesEndpoints
         routeGroupBuilder.MapDelete("/heroes/{id}", DeleteHero);
     }
 
-    Task<IResult> GetHeroes(MarvelHeroesDbContext db)
-    {
-        return Task.Run(() => Results.Ok(db.Heroes.ToListAsync()));
-    }
+    async Task<IResult> GetHeroes(MarvelHeroesDbContext db)
+        => Results.Ok(await db.Heroes.ToListAsync());
 
     async Task<IResult> GetHero(MarvelHeroesDbContext db, int id)
     {
-        var hero = await db.Heroes.FindAsync(id);
+        var hero = await db.Heroes.Where(h => h.Id == id).Include(h => h.Powers).FirstOrDefaultAsync();
         if (hero == null)
             return Results.NotFound();
 
@@ -74,7 +72,10 @@ public class HeroesEndpoints
         return Results.Ok(hero);
     }
 
-    Task<IResult> DeleteHero(MarvelHeroesDbContext db, int id)
-        => Task.Run(() =>
+    async Task<IResult> DeleteHero(MarvelHeroesDbContext db, int id)
+    {
+        await Task.Run(() =>
             Results.Ok(db.Heroes.Remove(new Hero() { Id = id })));
+        return Results.Ok();
+    }
 }
