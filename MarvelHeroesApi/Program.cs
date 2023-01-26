@@ -38,6 +38,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Static files (for React App)
+app.UseDefaultFiles();
+app.UseStaticFiles();
+app.MapFallbackToFile("index.html");
+
 var apiMapGroup = app.MapGroup("/api");
 
 new HeroesEndpoints(apiMapGroup);
