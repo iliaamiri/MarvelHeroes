@@ -11,10 +11,21 @@ public class MarvelHeroesDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Hero>()
-            .HasMany(h => h.Powers)
-            .WithMany(p => p.Heroes)
-            .UsingEntity(j => j.ToTable("HeroPowers"));
+        modelBuilder.Entity<Power>()
+            .HasMany(p => p.Heroes)
+            .WithMany(h => h.Powers)
+            .UsingEntity<HeroPower>(
+                j => j
+                    .HasOne(hp => hp.Hero)
+                    .WithMany(t => t.HeroPowers)
+                    .HasForeignKey(hp => hp.HeroId)
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => j
+                    .HasOne(hp => hp.Power)
+                    .WithMany(t => t.HeroPowers)
+                    .HasForeignKey(hp => hp.PowerId)
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => { j.HasKey(t => new { t.HeroId, t.PowerId }); });
 
         modelBuilder.Entity<Power>()
             .HasData(
@@ -41,6 +52,7 @@ public class MarvelHeroesDbContext : DbContext
                 });
     }
 
+    public DbSet<HeroPower> HeroPowers => Set<HeroPower>();
     public DbSet<Hero> Heroes => Set<Hero>();
     public DbSet<Power> Powers => Set<Power>();
 }

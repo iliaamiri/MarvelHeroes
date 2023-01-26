@@ -8,7 +8,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
-namespace MarvelHeroesApi.Migrations
+namespace MarvelHeroesApi.Data.Migrations
 {
     [DbContext(typeof(MarvelHeroesDbContext))]
     partial class MarvelHeroesDbContextModelSnapshot : ModelSnapshot
@@ -21,21 +21,6 @@ namespace MarvelHeroesApi.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("HeroPower", b =>
-                {
-                    b.Property<int>("HeroesId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("PowersId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("HeroesId", "PowersId");
-
-                    b.HasIndex("PowersId");
-
-                    b.ToTable("HeroPowers", (string)null);
-                });
 
             modelBuilder.Entity("MarvelHeroesApi.Data.Entities.Hero", b =>
                 {
@@ -71,6 +56,21 @@ namespace MarvelHeroesApi.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Heroes");
+                });
+
+            modelBuilder.Entity("MarvelHeroesApi.Data.Entities.HeroPower", b =>
+                {
+                    b.Property<int>("HeroId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("PowerId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("HeroId", "PowerId");
+
+                    b.HasIndex("PowerId");
+
+                    b.ToTable("HeroPowers");
                 });
 
             modelBuilder.Entity("MarvelHeroesApi.Data.Entities.Power", b =>
@@ -114,19 +114,33 @@ namespace MarvelHeroesApi.Migrations
                         });
                 });
 
-            modelBuilder.Entity("HeroPower", b =>
+            modelBuilder.Entity("MarvelHeroesApi.Data.Entities.HeroPower", b =>
                 {
-                    b.HasOne("MarvelHeroesApi.Data.Entities.Hero", null)
-                        .WithMany()
-                        .HasForeignKey("HeroesId")
+                    b.HasOne("MarvelHeroesApi.Data.Entities.Hero", "Hero")
+                        .WithMany("HeroPowers")
+                        .HasForeignKey("HeroId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MarvelHeroesApi.Data.Entities.Power", null)
-                        .WithMany()
-                        .HasForeignKey("PowersId")
+                    b.HasOne("MarvelHeroesApi.Data.Entities.Power", "Power")
+                        .WithMany("HeroPowers")
+                        .HasForeignKey("PowerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Hero");
+
+                    b.Navigation("Power");
+                });
+
+            modelBuilder.Entity("MarvelHeroesApi.Data.Entities.Hero", b =>
+                {
+                    b.Navigation("HeroPowers");
+                });
+
+            modelBuilder.Entity("MarvelHeroesApi.Data.Entities.Power", b =>
+                {
+                    b.Navigation("HeroPowers");
                 });
 #pragma warning restore 612, 618
         }

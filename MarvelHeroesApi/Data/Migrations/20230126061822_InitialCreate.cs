@@ -6,7 +6,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
 
-namespace MarvelHeroesApi.Migrations
+namespace MarvelHeroesApi.Data.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -51,21 +51,21 @@ namespace MarvelHeroesApi.Migrations
                 name: "HeroPowers",
                 columns: table => new
                 {
-                    HeroesId = table.Column<int>(type: "integer", nullable: false),
-                    PowersId = table.Column<int>(type: "integer", nullable: false)
+                    HeroId = table.Column<int>(type: "integer", nullable: false),
+                    PowerId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HeroPowers", x => new { x.HeroesId, x.PowersId });
+                    table.PrimaryKey("PK_HeroPowers", x => new { x.HeroId, x.PowerId });
                     table.ForeignKey(
-                        name: "FK_HeroPowers_Heroes_HeroesId",
-                        column: x => x.HeroesId,
+                        name: "FK_HeroPowers_Heroes_HeroId",
+                        column: x => x.HeroId,
                         principalTable: "Heroes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_HeroPowers_Powers_PowersId",
-                        column: x => x.PowersId,
+                        name: "FK_HeroPowers_Powers_PowerId",
+                        column: x => x.PowerId,
                         principalTable: "Powers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -82,9 +82,9 @@ namespace MarvelHeroesApi.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_HeroPowers_PowersId",
+                name: "IX_HeroPowers_PowerId",
                 table: "HeroPowers",
-                column: "PowersId");
+                column: "PowerId");
         }
 
         /// <inheritdoc />

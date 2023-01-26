@@ -13,5 +13,6 @@ public class Hero
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
     
-    public ICollection<Power> Powers { get; set; } = new List<Power>();
+    public virtual ICollection<Power> Powers { get; set; }
+    public virtual ICollection<HeroPower> HeroPowers { get; set; }
 }
