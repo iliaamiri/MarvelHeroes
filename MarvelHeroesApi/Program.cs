@@ -1,6 +1,7 @@
 using MarvelHeroesApi.Data;
 using MarvelHeroesApi.Endpoints;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,4 +1,5 @@
-﻿using MarvelHeroesApi.Data;
+﻿using System.Runtime.InteropServices.ComTypes;
+using MarvelHeroesApi.Data;
 using MarvelHeroesApi.Data.Entities;
 using MarvelHeroesApi.Dtos.Power;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -56,8 +57,11 @@ public class PowersEndpoints
 
     async Task<IResult> DeletePower(MarvelHeroesDbContext db, int id)
     {
-        await Task.Run(() =>
-            Results.Ok(db.Powers.Remove(new Power() { Id = id })));
-        return Results.Ok();
+        return await Task.Run(() =>
+        {
+            db.Powers.Remove(new Power() { Id = id });
+            db.SaveChanges();
+            return Results.Ok();
+        });
     }
 }

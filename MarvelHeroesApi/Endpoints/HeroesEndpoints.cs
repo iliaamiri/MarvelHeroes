@@ -1,4 +1,6 @@
-﻿using MarvelHeroesApi.Data;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using MarvelHeroesApi.Data;
 using MarvelHeroesApi.Data.Entities;
 using MarvelHeroesApi.Dtos.Hero;
 using Microsoft.AspNetCore.Mvc;
@@ -26,7 +28,11 @@ public class HeroesEndpoints
         if (hero == null)
             return Results.NotFound();
 
-        return Results.Ok(hero);
+        return Results.Json(hero, new JsonSerializerOptions()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            ReferenceHandler = ReferenceHandler.Preserve
+        }, statusCode: 200);
     }
 
     async Task<IResult> CreateHero(MarvelHeroesDbContext db, CreateHero hero)
@@ -36,46 +42,86 @@ public class HeroesEndpoints
             HeroName = hero.HeroName,
             SecretIdentity = hero.SecretIdentity,
             Gender = hero.Gender,
-            BirthDate = hero.BirthDate,
-            FirstAppearance = hero.FirstAppearance,
+            BirthDate = hero.BirthDate.ToUniversalTime(),
+            FirstAppearance = hero.FirstAppearance.ToUniversalTime(),
 
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
+
+            Powers = new List<Power>()
         };
 
-        var powers = await db.Powers.Where(p => hero.PowersIds.Contains(p.Id)).ToListAsync();
-        newHero.Powers = powers;
-
         await db.Heroes.AddAsync(newHero);
+
+        var powers = await db.Powers.Where(p => hero.PowersIds.Contains(p.Id)).ToListAsync();
+
+        powers.ForEach(power =>
+        {
+            db.HeroPowers.AddAsync(new HeroPower()
+            {
+                Hero = newHero,
+                Power = power,
+            });
+        });
         await db.SaveChangesAsync();
 
-        return Results.Created($"/heroes/{newHero.Id}", newHero);
+        return Results.Json(newHero, new JsonSerializerOptions()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            ReferenceHandler = ReferenceHandler.Preserve
+        }, statusCode: 201);
     }
 
     async Task<IResult> UpdateHero(MarvelHeroesDbContext db, UpdateHero payload)
     {
-        var hero = await db.Heroes.FindAsync(payload.Id);
+        var hero = await db.Heroes.Where(h => h.Id == payload.Id).Include(h => h.Powers).FirstOrDefaultAsync();
         if (hero == null)
             return Results.NotFound();
 
         hero.HeroName = payload.HeroName;
+        hero.SecretIdentity = payload.SecretIdentity;
         hero.Gender = payload.Gender;
-        hero.BirthDate = payload.BirthDate;
-        hero.FirstAppearance = payload.FirstAppearance;
+        hero.BirthDate = payload.BirthDate.ToUniversalTime();
+        hero.FirstAppearance = payload.FirstAppearance.ToUniversalTime();
         hero.UpdatedAt = DateTime.UtcNow;
 
-        var powers = await db.Powers.Where(p => payload.PowersIds.Contains(p.Id)).ToListAsync();
-        hero.Powers = powers;
+        foreach (var heroPower in hero.Powers)
+        {
+            if (payload.PowersIds.Contains(heroPower.Id)) continue;
+            var power = hero.HeroPowers.Where(p => p.PowerId == heroPower.Id).ToList()[0];
+            db.Entry(power).State = EntityState.Deleted;
+        }
 
         await db.SaveChangesAsync();
 
-        return Results.Ok(hero);
+        foreach (var powerId in payload.PowersIds)
+        {
+            if (hero.Powers.Any(p => p.Id == powerId)) continue;
+            db.HeroPowers.Add(new HeroPower() { HeroId = hero.Id, PowerId = powerId });
+        }
+
+        try
+        {
+            await db.SaveChangesAsync();
+        }
+        catch
+        {
+        } // If fails due to duplicated rows, it's ok.
+
+        return Results.Json(hero, new JsonSerializerOptions()
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            ReferenceHandler = ReferenceHandler.Preserve
+        }, statusCode: 200);
     }
 
     async Task<IResult> DeleteHero(MarvelHeroesDbContext db, int id)
     {
-        await Task.Run(() =>
-            Results.Ok(db.Heroes.Remove(new Hero() { Id = id })));
-        return Results.Ok();
+        return await Task.Run(() =>
+        {
+            db.Heroes.Remove(new Hero() { Id = id });
+            db.SaveChanges();
+            return Results.Ok();
+        });
     }
 }
