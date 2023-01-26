@@ -16,7 +16,7 @@ export function ListPowers({powers}: ListPowersProps) {
                     <p><b className={"text-violet-600"}>Description:</b> {power.description}</p>
                     <div className={"mt-5 flex justify-evenly"}>
                         <button onClick={() => navigate(`/powers/${power.id}/edit`)}>Edit 🧬</button>
-                        <button className={"bg-red-700"} onClick={() => navigate(`/powers/${power.id}/delete`)}>Delete 💀</button>
+                        <button className={"bg-red-700"} onClick={() => navigate(`/powers/${power.id}/delete`)}>Delete 🗑️</button>
                     </div>
                 </div>
             ))}

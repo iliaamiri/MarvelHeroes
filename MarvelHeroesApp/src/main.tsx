@@ -9,6 +9,11 @@ import {
 } from "react-router-dom"
 import CreateHero from './pages/createHero'
 import {PowersHomePage} from "./pages/powersHomePage";
+import {EditHero} from "./pages/editHero";
+import {CreatePower} from "./pages/createPower";
+import {EditPower} from "./pages/editPower";
+import {DeleteHero} from "./pages/deleteHero";
+import {DeletePower} from "./pages/deletePower";
 
 const router = createBrowserRouter([
   {
@@ -21,23 +26,27 @@ const router = createBrowserRouter([
   },
   {
     path: "/heroes/:id/edit",
-    element: <CreateHero />,
+    element: <EditHero />,
   },
   {
     path: "/heroes/:id/delete",
-    element: <CreateHero />,
+    element: <DeleteHero />,
   },
   {
     path: "/powers",
     element: <PowersHomePage />,
   },
   {
+    path: "/powers/new",
+    element: <CreatePower />,
+  },
+  {
     path: "/powers/:id/edit",
-    element: <PowersHomePage />,
+    element: <EditPower />,
   },
   {
     path: "/powers/:id/delete",
-    element: <PowersHomePage />,
+    element: <DeletePower />,
   },
 ]);
 

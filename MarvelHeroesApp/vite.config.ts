@@ -7,7 +7,8 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: 'https://impolite-cake-production.up.railway.app/',
+        // target: 'https://impolite-cake-production.up.railway.app/',
+        target: 'http://localhost:43759/',
         changeOrigin: true,
       }
     }

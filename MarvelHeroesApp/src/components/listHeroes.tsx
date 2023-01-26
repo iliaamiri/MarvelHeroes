@@ -19,7 +19,7 @@ export function ListHeroes({heroes}: ListHeroesProps) {
                             <p><b>First Appearance:</b> {new Date(hero.firstAppearance).toLocaleDateString()}
                             </p>
                             <p><b>Birth Date:</b> {new Date(hero.birthDate).toLocaleDateString()}</p>
-                            <button className={"mt-2"}>Checkout their Powers! 🙀</button>
+                            <button className={"mt-2"} onClick={() => navigate(`/heroes/${hero.id}/edit`)}>Checkout their Powers! 🙀</button>
                             <div className={"mt-5 flex justify-between"}>
                                 <button onClick={() => navigate(`/heroes/${hero.id}/edit`)}>Edit 🧬</button>
                                 <button className={"bg-red-700"} onClick={() => navigate(`/heroes/${hero.id}/delete`)}>Delete 💀</button>

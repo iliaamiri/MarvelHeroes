@@ -5,7 +5,7 @@ interface Props {
     value?: string;
     placeholder: string;
     type: React.HTMLInputTypeAttribute;
-    onChange: any;
+    onChange: React.ChangeEventHandler<HTMLInputElement> | undefined;
     required: boolean;
 }
 
